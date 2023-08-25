@@ -1,0 +1,59 @@
+name: Playwright Tests
+on:
+  push:
+    branches: [ main, master ]
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: Start local environment with Docker Compose
+      run: docker compose up -d --wait --wait-timeout 30
+
+    # - name: Sleep
+    #   uses: jakejarvis/wait-action@master
+    #   with:
+    #     time: '10s'
+
+    # healthcheck:
+    #   test: curl --fail http://localhost/ping || exit 1
+    #   interval: 2s
+    #   retries: 10
+    #   start_period: 10s
+    #   timeout: 10s 
+
+    # - name: curl
+    #   run: curl http://localhost:4000
+
+    - name: DB Migration
+      run: docker exec git-actions-docker-api-1 npx prisma migrate dev --name=init
+
+    - name: DB Seed
+      run: docker exec git-actions-docker-api-1 npm run seed
+
+    - name: Install playwright
+      working-directory: ./client
+      run: npm install @playwright/test
+
+    - name: Install Playwright Browsers
+      working-directory: ./client
+      run: npx playwright install --with-deps
+
+    - name: Run Playwright tests
+      working-directory: ./client
+      run: npx playwright test
+
+    - name: Kill Docker
+      run: docker-compose kill
+
+    - uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 30
