@@ -36,9 +36,9 @@ jobs:
       - name: DB Seed
         run: docker exec docker-tests-api-1 yarn seed
 
-      # - name: Install playwright
-      #   working-directory: ./client
-      #   run: yarn add @playwright/test
+      - name: Install playwright
+        working-directory: ./client
+        run: yarn add @playwright/test
 
       - name: Install Playwright Browsers
         working-directory: ./client
