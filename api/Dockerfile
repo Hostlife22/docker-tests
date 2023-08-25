@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY ./package.json ./package.json
 
-RUN npm install
+RUN yarn install
 
 COPY ./src ./src
 
@@ -16,4 +16,4 @@ RUN npx prisma generate
 
 EXPOSE 5000
 
-CMD ["npm", "run", "dev"]
+CMD ["yarn", "dev"]
