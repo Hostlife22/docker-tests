@@ -1,7 +1,9 @@
 name: Playwright Tests
+
 on:
-  push:
+  pull_request:
     branches: [main, master]
+
 jobs:
   test:
     timeout-minutes: 60
@@ -22,7 +24,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-
 
       # - name: Start local environment with Docker Compose
       #   container:
