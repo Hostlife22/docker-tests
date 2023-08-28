@@ -1,19 +1,33 @@
-name: Playwright Tests KIRILL
+name: Playwright Tests 2 
+
 on:
   pull_request:
     branches: [main, master]
+
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - dockerfile: ./client/Dockerfile
+            image: client_git
+          - dockerfile: ./api/Dockerfile
+            image: api_git
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      - name: Start local environment with Docker Compose
-        run: docker compose up -d --wait --wait-timeout 30
+      # - name: Start local environment with Docker Compose
+      #   container:
+      #     image: client_git
 
       # - name: Sleep
       #   uses: jakejarvis/wait-action@master
